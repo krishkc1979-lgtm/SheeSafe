@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#f3e8ff">
+<title>SheSafe@School</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg1:#fff4f8; --bg2:#f3ecff; --bg3:#eaf7f6;      /* soft blush -> lavender -> mint (easy on the eyes) */
+  --plum:#7b4bc4; --plum-d:#5d33a3; --rose:#e8628d; --rose-l:#ffd9e6;
+  --mint:#4fbfb3; --ink:#3b2a52; --muted:#85799a; --card:#ffffffcc;
+  --warn:#f5a524; --danger:#e5484d;
+  --shadow:0 8px 24px rgba(123,75,196,.14);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;font-family:'Poppins',sans-serif;color:var(--ink);overflow:hidden}
+body{background:linear-gradient(160deg,var(--bg1) 0%,var(--bg2) 55%,var(--bg3) 100%);}
+/* floating soft shapes */
+body::before,body::after{content:"";position:fixed;border-radius:50%;filter:blur(40px);z-index:0;opacity:.55}
+body::before{width:220px;height:220px;background:#ffc7dc;top:-60px;right:-60px}
+body::after{width:240px;height:240px;background:#cfe9ff;bottom:60px;left:-90px}
+
+#app{position:relative;z-index:1;height:100%;max-width:480px;margin:0 auto;display:flex;flex-direction:column}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 6px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:40px;height:40px;border-radius:14px;background:linear-gradient(135deg,var(--rose),var(--plum));display:grid;place-items:center;color:#fff;font-size:20px;box-shadow:var(--shadow)}
+.brand h1{font-family:'Playfair Display',serif;font-size:19px;margin:0;line-height:1.1}
+.brand small{color:var(--muted);font-size:11px}
+.exit{border:0;background:#fff;color:var(--plum-d);font:600 12px Poppins;padding:8px 12px;border-radius:20px;box-shadow:var(--shadow);cursor:pointer}
+
+main{flex:1;overflow-y:auto;padding:6px 18px 110px;scroll-behavior:smooth}
+.screen{display:none;animation:fade .35s ease}
+.screen.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.hero{background:linear-gradient(135deg,#fff 0%,#fbeaff 100%);border-radius:26px;padding:20px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.hero h2{font-family:'Playfair Display',serif;font-size:24px;margin:0 0 6px}
+.hero p{margin:0 0 14px;color:var(--muted);font-size:13.5px;line-height:1.5}
+.hero .flower{position:absolute;right:-6px;top:-6px;font-size:70px;opacity:.18}
+.btn{border:0;border-radius:18px;padding:13px 18px;font:600 14px Poppins;cursor:pointer;transition:.2s}
+.btn.primary{background:linear-gradient(135deg,var(--rose),var(--plum));color:#fff;box-shadow:0 8px 18px rgba(232,98,141,.35)}
+.btn:active{transform:scale(.97)}
+.privacy{display:flex;gap:8px;align-items:center;background:#e8f8f5;color:#237a70;font-size:12px;padding:10px 12px;border-radius:14px;margin:14px 0}
+
+h3.sec{font-size:14px;margin:18px 2px 10px;color:var(--plum-d)}
+.chips{display:flex;flex-wrap:wrap;gap:9px}
+.chip{background:var(--card);border:1.5px solid #eadcff;border-radius:18px;padding:10px 14px;font:500 13px Poppins;color:var(--ink);cursor:pointer;box-shadow:0 4px 12px rgba(123,75,196,.08)}
+.chip:active{background:var(--rose-l)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{background:var(--card);backdrop-filter:blur(6px);border-radius:20px;padding:14px;box-shadow:var(--shadow);cursor:pointer}
+.tile .ic{font-size:26px}
+.tile b{display:block;font-size:13.5px;margin-top:6px}
+.tile span{font-size:11.5px;color:var(--muted)}
+
+/* chat */
+.chatwrap{display:flex;flex-direction:column;gap:10px;padding-bottom:10px}
+.bubble{max-width:86%;padding:12px 14px;border-radius:20px;font-size:14px;line-height:1.5;animation:fade .3s}
+.bot{background:#fff;border-bottom-left-radius:6px;box-shadow:var(--shadow)}
+.me{align-self:flex-end;background:linear-gradient(135deg,var(--rose),var(--plum));color:#fff;border-bottom-right-radius:6px}
+.typing{display:flex;gap:4px}.typing i{width:7px;height:7px;border-radius:50%;background:var(--plum);opacity:.4;animation:b 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes b{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px);opacity:1}}
+
+.card{background:#fff;border-radius:20px;padding:14px;box-shadow:var(--shadow);margin-top:2px;border-left:6px solid var(--mint)}
+.card.low{border-color:var(--mint)}.card.medium{border-color:var(--warn)}
+.card.high{border-color:var(--rose)}.card.emergency{border-color:var(--danger);background:#fff5f5}
+.badge{display:inline-block;font-size:11px;font-weight:600;padding:4px 10px;border-radius:12px;color:#fff;margin-bottom:6px}
+.badge.low{background:var(--mint)}.badge.medium{background:var(--warn)}.badge.high{background:var(--rose)}.badge.emergency{background:var(--danger)}
+.card h4{margin:2px 0 8px;font-size:14px}
+.card ol{margin:0 0 10px;padding-left:18px;font-size:13px;line-height:1.55}
+.callrow{display:flex;gap:8px;flex-wrap:wrap}
+.call{display:inline-flex;gap:6px;align-items:center;text-decoration:none;background:var(--danger);color:#fff;font:600 13px Poppins;padding:10px 14px;border-radius:14px}
+.call.alt{background:var(--plum)}
+.adult{background:#fff7e6;border-radius:14px;padding:10px 12px;font-size:12.5px;margin-top:8px;color:#8a5a00}
+
+.composer{position:fixed;left:0;right:0;bottom:72px;max-width:480px;margin:0 auto;padding:8px 14px;display:none;z-index:5}
+.composer.show{display:flex;gap:8px}
+.composer input{flex:1;border:0;border-radius:22px;padding:14px 16px;font:14px Poppins;box-shadow:var(--shadow);outline:none;background:#fff;color:var(--ink)}
+.send{width:48px;height:48px;border-radius:50%;border:0;background:linear-gradient(135deg,var(--rose),var(--plum));color:#fff;font-size:18px;cursor:pointer;box-shadow:0 6px 16px rgba(232,98,141,.4)}
+
+/* helpline list */
+.hl{display:flex;justify-content:space-between;align-items:center;background:var(--card);border-radius:18px;padding:12px 14px;margin-bottom:10px;box-shadow:var(--shadow)}
+.hl b{font-size:14px}.hl small{display:block;color:var(--muted);font-size:11.5px}
+.hl a{background:var(--mint);color:#fff;text-decoration:none;font-weight:600;padding:9px 14px;border-radius:14px;font-size:14px}
+.tip{background:var(--card);border-radius:18px;padding:14px;margin-bottom:10px;box-shadow:var(--shadow);font-size:13.5px;line-height:1.5}
+.tip b{color:var(--plum-d)}
+
+/* bottom nav */
+nav{position:fixed;left:0;right:0;bottom:0;max-width:480px;margin:0 auto;display:flex;justify-content:space-around;align-items:center;background:#ffffffee;backdrop-filter:blur(10px);padding:8px 8px 12px;border-radius:26px 26px 0 0;box-shadow:0 -6px 24px rgba(123,75,196,.12);z-index:6}
+nav button{border:0;background:none;font:500 11px Poppins;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:4px 10px;border-radius:14px}
+nav button .i{font-size:22px}
+nav button.active{color:var(--plum-d);font-weight:600;background:#f3e8ff}
+.sos{width:62px;height:62px;margin-top:-34px;border-radius:50%;border:4px solid #fff;background:linear-gradient(135deg,#ff6a88,var(--danger));color:#fff;font:700 15px Poppins;box-shadow:0 8px 20px rgba(229,72,77,.5);cursor:pointer;animation:pulse 2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(229,72,77,.5)}70%{box-shadow:0 0 0 14px rgba(229,72,77,0)}100%{box-shadow:0 0 0 0 rgba(229,72,77,0)}}
+
+/* SOS modal */
+.modal{position:fixed;inset:0;background:#3b2a5299;z-index:20;display:none;align-items:flex-end;justify-content:center}
+.modal.show{display:flex}
+.sheet{background:#fff;width:100%;max-width:480px;border-radius:28px 28px 0 0;padding:20px;animation:up .3s ease}
+@keyframes up{from{transform:translateY(100%)}to{transform:none}}
+.sheet h3{margin:0 0 4px;font-family:'Playfair Display',serif;font-size:22px;color:var(--danger)}
+.sheet p{margin:0 0 14px;color:var(--muted);font-size:13px}
+.sheet .big{display:block;text-align:center;text-decoration:none;background:var(--danger);color:#fff;font:700 17px Poppins;padding:15px;border-radius:18px;margin-bottom:10px}
+.sheet .big.alt{background:var(--plum)}
+.sheet .close{width:100%;border:0;background:#f3ecff;color:var(--plum-d);font:600 14px Poppins;padding:13px;border-radius:16px;cursor:pointer;margin-top:4px}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="brand">
+      <div class="logo">🛡️</div>
+      <div><h1>SheSafe</h1><small>@School · your safe space</small></div>
+    </div>
+    <button class="exit" onclick="quickExit()">✖ Quick Exit</button>
+  </header>
+
+  <main>
+    <!-- HOME -->
+    <section id="home" class="screen active">
+      <div class="hero">
+        <div class="flower">🌸</div>
+        <h2>Hi, you are safe here 💜</h2>
+        <p>Tell me what is troubling you - privately. No names, no judgement, and you don't have to face anyone first.</p>
+        <button class="btn primary" onclick="go('talk')">💬 Talk to SheSafe</button>
+      </div>
+      <div class="privacy">🔒 <span>Private &amp; anonymous. Nothing you type is saved. Demo data only.</span></div>
+
+      <h3 class="sec">How are you feeling today?</h3>
+      <div class="chips">
+        <button class="chip" onclick="quick('I feel scared and anxious')">😟 Scared</button>
+        <button class="chip" onclick="quick('Someone is bullying me and making fun of me')">😢 Bullied</button>
+        <button class="chip" onclick="quick('Someone keeps following me and staring at me')">👀 Being followed</button>
+        <button class="chip" onclick="quick('Someone is blackmailing me online with my photo')">📱 Online trouble</button>
+        <button class="chip" onclick="quick('Someone makes me uncomfortable with bad comments')">🚫 Uncomfortable</button>
+        <button class="chip" onclick="quick('I feel sad and lonely')">🌧️ Sad</button>
+      </div>
+
+      <h3 class="sec">Safety toolbox</h3>
+      <div class="grid">
+        <div class="tile" onclick="go('help')"><div class="ic">📞</div><b>Helplines</b><span>Free · 24x7</span></div>
+        <div class="tile" onclick="go('tips')"><div class="ic">🌷</div><b>Safety tips</b><span>Know your rights</span></div>
+        <div class="tile" onclick="go('talk')"><div class="ic">🤖</div><b>AI friend</b><span>Private chat</span></div>
+        <div class="tile" onclick="openSOS()"><div class="ic">🚨</div><b>SOS</b><span>Instant help</span></div>
+      </div>
+    </section>
+
+    <!-- TALK -->
+    <section id="talk" class="screen">
+      <div class="chatwrap" id="chat"></div>
+    </section>
+
+    <!-- HELP -->
+    <section id="help" class="screen">
+      <h3 class="sec">Tap to call · free</h3>
+      <div id="hlist"></div>
+      <div class="adult">💛 A trusted adult can be a teacher, counsellor, parent, elder sister or any adult you feel safe with.</div>
+    </section>
+
+    <!-- TIPS -->
+    <section id="tips" class="screen">
+      <h3 class="sec">You are never alone 🌷</h3>
+      <div class="tip"><b>It is never your fault.</b> The person who hurts or scares you is the one doing wrong.</div>
+      <div class="tip"><b>Trust your feelings.</b> If something feels wrong or uncomfortable, it is okay to say NO and walk away.</div>
+      <div class="tip"><b>Good touch / Bad touch.</b> Nobody has the right to touch you in a way that makes you uncomfortable. Tell a trusted adult.</div>
+      <div class="tip"><b>Stay online-safe.</b> Don't share private photos or OTPs. Block, report and screenshot anything harmful.</div>
+      <div class="tip"><b>Travel smart.</b> Walk in groups, stay in lit and busy places, share your live location with someone you trust.</div>
+      <div class="tip"><b>Secrets that scare you</b> should never be kept. Brave girls ask for help. 💜</div>
+    </section>
+  </main>
+
+  <div class="composer" id="composer">
+    <input id="inp" placeholder="Type what is troubling you..." autocomplete="off">
+    <button class="send" onclick="send()">➤</button>
+  </div>
+
+  <nav>
+    <button data-s="home" class="active" onclick="go('home')"><span class="i">🏠</span>Home</button>
+    <button data-s="talk" onclick="go('talk')"><span class="i">💬</span>Talk</button>
+    <button class="sos" onclick="openSOS()">SOS</button>
+    <button data-s="help" onclick="go('help')"><span class="i">📞</span>Help</button>
+    <button data-s="tips" onclick="go('tips')"><span class="i">🌷</span>Tips</button>
+  </nav>
+</div>
+
+<!-- SOS -->
+<div class="modal" id="sos" onclick="if(event.target===this)closeSOS()">
+  <div class="sheet">
+    <h3>Need help right now?</h3>
+    <p>Move to a safe, crowded place. Tap to call - it is free.</p>
+    <a class="big" href="tel:112">🚨 Call 112 · Emergency</a>
+    <a class="big alt" href="tel:181">👩 Women Helpline 181</a>
+    <a class="big alt" href="tel:1098">🧒 CHILDLINE 1098</a>
+    <button class="close" onclick="closeSOS()">I am okay, close</button>
+  </div>
+</div>
+
+<script>
+const API = window.SHESAFE_API || '';   // e.g. "https://your-app.replit.app" when packaged in an APK
+const FALLBACK_CONTACTS=[
+ {name:"Emergency (Police / Ambulance)",number:"112",note:"Immediate danger"},
+ {name:"Women Helpline",number:"181",note:"24x7, free"},
+ {name:"CHILDLINE",number:"1098",note:"For anyone under 18"},
+ {name:"Police",number:"100",note:"Report a crime"},
+ {name:"Tele-MANAS (mental health)",number:"14416",note:"Free counselling"}];
+let history=[], started=false;
+const $=id=>document.getElementById(id);
+
+function go(s){
+  document.querySelectorAll('.screen').forEach(e=>e.classList.remove('active'));
+  $(s).classList.add('active');
+  document.querySelectorAll('nav button[data-s]').forEach(b=>b.classList.toggle('active',b.dataset.s===s));
+  $('composer').classList.toggle('show',s==='talk');
+  if(s==='talk'&&!started){started=true;botSay("Hi 💜 I'm SheSafe, your private safe friend. You don't need to tell me your name. What is troubling you today?");}
+  if(s==='help')renderContacts(FALLBACK_CONTACTS);
+  document.querySelector('main').scrollTop=0;
+}
+function quick(t){go('talk');setTimeout(()=>{$('inp').value=t;send();},150)}
+function openSOS(){$('sos').classList.add('show')}
+function closeSOS(){$('sos').classList.remove('show')}
+function quickExit(){history=[];$('chat').innerHTML='';window.location.replace('https://www.google.com')}
+
+function scrollDown(){const m=document.querySelector('main');setTimeout(()=>m.scrollTop=m.scrollHeight,50)}
+function botSay(t){const d=document.createElement('div');d.className='bubble bot';d.textContent=t;$('chat').appendChild(d);scrollDown()}
+function meSay(t){const d=document.createElement('div');d.className='bubble me';d.textContent=t;$('chat').appendChild(d);scrollDown()}
+function typing(){const d=document.createElement('div');d.className='bubble bot';d.id='typing';d.innerHTML='<div class="typing"><i></i><i></i><i></i></div>';$('chat').appendChild(d);scrollDown()}
+
+function renderContacts(list){
+  $('hlist').innerHTML=list.map(c=>`<div class="hl"><div><b>${c.name}</b><small>${c.note}</small></div><a href="tel:${c.number}">📞 ${c.number}</a></div>`).join('');
+}
+
+function resultCard(r){
+  const lvl={low:'Gentle support',medium:'Needs attention',high:'Important – please get help',emergency:'Urgent – get help now'}[r.level];
+  let h=`<div class="card ${r.level}"><span class="badge ${r.level}">${lvl}</span><h4>${r.title}</h4><b style="font-size:12.5px">Your safe next steps</b><ol>${r.steps.map(s=>`<li>${s}</li>`).join('')}</ol>`;
+  if(r.emergency||r.contacts.length){
+    h+=`<div class="callrow"><a class="call" href="tel:112">🚨 112</a><a class="call alt" href="tel:1098">1098</a><a class="call alt" href="tel:181">181</a></div>`;
+  }
+  if(r.trusted_adult){h+=`<div class="adult">👩‍🏫 Please tell a <b>trusted adult</b> (teacher, counsellor or parent). You don't have to do this alone.</div>`}
+  h+='</div>';
+  const d=document.createElement('div');d.innerHTML=h;$('chat').appendChild(d);scrollDown();
+}
+
+async function send(){
+  const inp=$('inp'),t=inp.value.trim();if(!t)return;
+  inp.value='';meSay(t);typing();
+  let r;
+  try{
+    const res=await fetch(API+'/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({message:t,history:history.slice(-6)})});
+    r=await res.json();
+  }catch(e){
+    r={reply:"I couldn't connect, but your safety matters. If you are in danger, please call 112 or tell a trusted adult now.",
+       title:"Connection issue",level:"high",steps:["Call 112 if in danger","Tell a trusted adult","Try again in a moment"],
+       contacts:FALLBACK_CONTACTS,trusted_adult:true,emergency:false};
+  }
+  const ty=$('typing');if(ty)ty.remove();
+  history.push({role:'user',text:t});history.push({role:'bot',text:r.reply});
+  botSay(r.reply);resultCard(r);
+  if(r.emergency)openSOS();
+}
+$('inp').addEventListener('keydown',e=>{if(e.key==='Enter')send()});
+</script>
+</body>
+</html>
