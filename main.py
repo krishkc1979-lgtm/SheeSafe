@@ -215,7 +215,12 @@ app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 @app.get("/")
 def index():
-    html_path = os.path.join(static_dir, "index.html")
-    if os.path.exists(html_path):
-        return FileResponse(html_path)
+    # Pehle static/index.html check karega, agar nahi mila toh seedha index.html uthayega
+    static_html = os.path.join(BASE, "static", "index.html")
+    direct_html = os.path.join(BASE, "index.html")
+    
+    if os.path.exists(static_html):
+        return FileResponse(static_html)
+    elif os.path.exists(direct_html):
+        return FileResponse(direct_html)
     return {"status": "ok", "message": "Backend running, static folder is being set up."}
