@@ -129,6 +129,16 @@ def chat(payload: ChatIn):
 def helplines():
     return CONTACTS
 
+# 1. Health check ke liye dedicated route
 @app.get("/health")
-def health():
-    return {"ok": True}
+def health_check():
+    return JSONResponse(status_code=200, content={"status": "ok"})
+
+# 2. Replit ke default root health check ke liye instant response
+@app.get("/")
+def read_root():
+    # Agar static HTML serve karna hai:
+    if os.path.exists("index.html"):
+        with open("index.html", "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read(), status_code=200)
+    return JSONResponse(status_code=200, content={"status": "online", "app": "SheSafe"})
